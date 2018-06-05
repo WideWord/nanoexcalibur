@@ -22,15 +22,13 @@ int main() {
 	player.set(Rotation(5));
 
 	world.createEntity().set(Rotation(-2));
+	world.createEntity().set(Position(4, 20));
 
 
-	for (auto pos : world.queryComponents<Position>()) {
-		std::cout << pos.x << ' ' << pos.y << '\n';
+	for (auto e : world.query<Position, Rotation>()) {
+		std::cout << e.get<Position>().x << '\n';
 	}
 
-	for (auto rot : world.queryComponents<Rotation>()) {
-		std::cout << rot.a << '\n';
-	}
 
 	return 0;
 }

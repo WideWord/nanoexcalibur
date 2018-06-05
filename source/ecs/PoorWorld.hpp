@@ -3,6 +3,7 @@
 #include "PoorEntity.hpp"
 #include "ComponentHelper.hpp"
 #include <stdlib.h>
+#include <functional>
 
 namespace nanoecs {
 
@@ -88,50 +89,88 @@ namespace nanoecs {
 			componentsAliveNum[family] -= 1;
 		}
 
-		template<typename T>
-		class ComponentListIterator {
+		class PoorQueryIterator {
 		public:
-			T& operator*() {
-				return data[id];
+			bool operator!=(const PoorQueryIterator& o) {
+				if (end) {
+					return !o.end;
+				} else {
+					return o.end || o.id != id;
+				}
+			}
+
+			PoorEntity operator*() {
+				return PoorEntity(id, world.generation[id]);
 			}
 
 			void operator++() {
-				id += 1;
+				while (id != maxEntitiesNum) {
+					id += 1;
+					if ((world.componentsMask[id] & mask) == mask) {
+						break;
+					}
+				}
+				if (id == maxEntitiesNum) {
+					end = true;
+				}
 			}
 
-			bool operator!=(const ComponentListIterator& o) {
-				return id != o.id;
+			explicit PoorQueryIterator(PoorWorld& world, uint64_t mask) : world(world), mask(mask) {
+				id = 0;
+				end = false;
+				while (id != maxEntitiesNum) {
+					if ((world.componentsMask[id] & mask) == mask) {
+						break;
+					}
+					id += 1;
+				}
+				if (id == maxEntitiesNum) {
+					end = true;
+				}
 			}
 
-			ComponentListIterator(T* data, uint32_t id) : id(id), data(data) {}
-		protected:
+			PoorQueryIterator(PoorWorld& world) : world(world), mask(0) {
+				end = true;
+			}
+		private:
+			PoorWorld& world;
+			uint64_t mask;
 			uint32_t id;
-			T* data;
+			bool end;
 		};
 
-		template<typename T>
-		class ComponentList {
+		class PoorQueryList {
 		public:
-			ComponentListIterator<T> begin() {
-				return ComponentListIterator<T>(data, 0);
+			PoorQueryList(PoorWorld& world, uint64_t mask) : world(world), mask(mask) {}
+			PoorQueryIterator begin() {
+				return PoorQueryIterator(world, mask);
 			}
-
-			ComponentListIterator<T> end() {
-				return ComponentListIterator<T>(data, count);
+			PoorQueryIterator end() {
+				return PoorQueryIterator(world);
 			}
-
-		protected:
-			friend class PoorWorld;
-			ComponentList(T* data, uint32_t count) : data(data), count(count) {}
-			T* data;
-			uint32_t count;
+		private:
+			PoorWorld& world;
+			uint64_t mask;
 		};
 
-		template<typename T>
-		ComponentList<T> queryComponents() {
-			auto family = ComponentHelper<T>::getFamily();
-			return ComponentList<T>((T*)componentsData[family], componentsAliveNum[family]);
+		template<typename ...T>
+		struct Dummy {};
+
+		template<typename T, typename... Tail>
+		uint64_t getQueryMask(Dummy<T, Tail...>) {
+			return getQueryMask(Dummy<Tail...>()) | ((uint64_t)1 << ComponentHelper<T>::getFamily());
 		}
+
+		uint64_t getQueryMask(Dummy<>) {
+			return 0;
+		}
+
+		template<typename... T>
+		PoorQueryList queryComponents() {
+			auto mask = getQueryMask(Dummy<T...>());
+			return PoorQueryList(*this, mask);
+		}
+
 	private:
 		uint32_t firstFree;
 		uint32_t nextFree[maxEntitiesNum];
