@@ -30,5 +30,8 @@ int main() {
 	}
 
 
+
+	world.getEventsManager().emit(Rotation(0.5f));
+
 	return 0;
 }
