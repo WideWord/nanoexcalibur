@@ -28,5 +28,9 @@ include_directories(${GLFW_INCLUDE_DIR})
 find_package(GLM)
 include_directories(${GLM_INCLUDE_DIRS})
 
+# SFML
+find_package(SFML COMPONENTS graphics window system)
+include_directories(${SFML_INCLUDE_DIR})
+
 add_executable(df ${DDE_SOURCE})
-target_link_libraries(df ${OPENGL_LIBRARY} ${GLFW_LIBRARIES})
+target_link_libraries(df ${OPENGL_LIBRARY} ${GLFW_LIBRARIES} ${SFML_LIBRARIES})

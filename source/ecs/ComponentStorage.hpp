@@ -15,6 +15,8 @@ namespace nexc {
 
 		virtual ~AnyComponentStorage() {};
 
+		virtual void remove(uint32_t entity) {}
+
 	protected:
 		void* data;
 		uint32_t aliveNum;
@@ -57,8 +59,9 @@ namespace nexc {
 			return ((T*)data)[iid];
 		}
 
-		void remove(uint32_t entity) {
+		void remove(uint32_t entity) final {
 			auto iid = internalId[entity];
+			if (iid == maxEntitiesNum) return;
 			if (iid != aliveNum - 1) {
 				auto swap = aliveNum - 1;
 				((T*)data)[iid] = ((T*)data)[swap];

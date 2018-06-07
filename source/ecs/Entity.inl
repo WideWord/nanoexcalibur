@@ -6,6 +6,7 @@
 namespace nexc {
 
 	bool Entity::isAlive() const {
+		if (id == maxEntitiesNum) return false;
 		return world->generation[id] == generation;
 	}
 

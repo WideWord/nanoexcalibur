@@ -38,9 +38,13 @@ namespace nexc {
 
 	void World::destroyEntity(const Entity& e) {
 		if (!e.isAlive()) return;
+		for (uint32_t i = 0; i < maxComponentTypesNum; ++i) {
+			componentStorages[i]->remove(e.id);
+		}
 		nextFree[e.id] = firstFree;
 		firstFree = e.id;
 		generation[e.id] += 1;
+		mask[e.id] = std::bitset<maxComponentTypesNum>();
 	}
 
 	template<typename... T>
@@ -58,13 +62,31 @@ namespace nexc {
 	}
 
 
-	void World::addSystem(System* s) {
-		systems.push_back(s);
+	void World::addSystem(System* s, int32_t queue) {
+
+		bool inserted = false;
+		for (auto it = systems.begin(); it != systems.end(); ++it) {
+			if ((*it)->queue > queue) {
+				systems.insert(it, s);
+				inserted = true;
+				break;
+			}
+		}
+		if (!inserted) {
+			systems.push_back(s);
+		}
+
+
 		s->world = this;
+		s->queue = queue;
 		s->configure();
 	}
 
 	void World::removeSystem(System* s) {
+		for (auto child : s->children) {
+			removeSystem(child);
+		}
+		s->children.clear();
 		s->shutdown();
 		eventsManager.unsubscribe(s);
 		s->world = nullptr;

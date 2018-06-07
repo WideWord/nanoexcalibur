@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "Config.hpp"
 
 namespace nexc {
 
@@ -8,6 +9,12 @@ namespace nexc {
 
 	class Entity {
 	public:
+		Entity() {
+			id = maxEntitiesNum;
+			generation = 0;
+			world = nullptr;
+		}
+
 		inline bool isAlive() const;
 
 		template<typename T>
