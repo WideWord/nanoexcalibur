@@ -3,6 +3,7 @@
 #include "World.hpp"
 #include "Entity.hpp"
 #include "QueryList.hpp"
+#include "System.hpp"
 
 namespace nexc {
 
@@ -56,5 +57,29 @@ namespace nexc {
 		return *((ComponentStorage<T>*)componentStorages[family]);
 	}
 
+
+	void World::addSystem(System* s) {
+		systems.push_back(s);
+		s->world = this;
+		s->configure();
+	}
+
+	void World::removeSystem(System* s) {
+		s->shutdown();
+		eventsManager.unsubscribe(s);
+		s->world = nullptr;
+		systems.remove(s);
+	}
+
+	void World::update() {
+		for (auto it = systems.begin(); it != systems.end(); ++it) {
+			(*it)->run();
+		}
+	}
+
+	template<typename T>
+	inline void World::emitEvent(const T& ev) {
+		eventsManager.emit(ev);
+	}
 
 }

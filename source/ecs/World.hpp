@@ -3,11 +3,14 @@
 #include "Config.hpp"
 #include <bitset>
 #include "ComponentStorage.hpp"
+#include <list>
+#include "EventsManager.hpp"
 
 namespace nexc {
 
 	class Entity;
 	class QueryList;
+	class System;
 
 	class World {
 	public:
@@ -18,10 +21,18 @@ namespace nexc {
 
 		template<typename... T>
 		inline QueryList getEntitiesWith();
+
+		inline void addSystem(System* s);
+		inline void removeSystem(System* s);
+		inline void update();
+
+		template<typename T>
+		inline void emitEvent(const T&);
 	private:
 		friend class Entity;
 		friend class QueryList;
 		friend class QueryIterator;
+		friend class System;
 
 		uint32_t firstFree;
 		uint32_t nextFree[maxEntitiesNum];
@@ -45,6 +56,9 @@ namespace nexc {
 			return std::bitset<maxComponentTypesNum>();
 		}
 
+		std::list<System*> systems;
+
+		EventsManager eventsManager;
 
 	};
 
