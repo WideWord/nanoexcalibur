@@ -1,37 +1,38 @@
-#include "ecs/ecs.hpp"
+#include "ecs/World.inl"
+#include "ecs/Entity.inl"
+#include "ecs/QueryList.inl"
 #include <iostream>
 
-using namespace nanoecs;
+using namespace nexc;
 
 struct Position {
 	float x, y;
 	Position(float x, float y) : x(x), y(y) {}
+	Position() : x(0), y(0) {}
 };
 
 struct Rotation {
 	float a;
 	Rotation(float a) : a(a) {}
+	Rotation() : a(0) {}
 };
 
 int main() {
 
 	World world;
 
-	auto player = world.createEntity();
-	player.set(Position(1, -2));
-	player.set(Rotation(5));
+	auto a = world.createEntity();
+	auto b = world.createEntity();
+	auto c = world.createEntity();
 
-	world.createEntity().set(Rotation(-2));
-	world.createEntity().set(Position(4, 20));
+	a.set(Position(1, 2));
+	b.set(Position(3, 4));
+	b.set(Rotation(-1));
+	c.set(Rotation(-2));
 
-
-	for (auto e : world.query<Position, Rotation>()) {
-		std::cout << e.get<Position>().x << '\n';
+	for (auto e : world.getEntitiesWith<Position, Rotation>()) {
+		std::cout << e.get<Rotation>().a;
 	}
-
-
-
-	world.getEventsManager().emit(Rotation(0.5f));
 
 	return 0;
 }

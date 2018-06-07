@@ -2,6 +2,7 @@
 
 #include "World.hpp"
 #include "Entity.hpp"
+#include "QueryList.hpp"
 
 namespace nexc {
 
@@ -11,6 +12,17 @@ namespace nexc {
 			nextFree[i] = i + 1;
 			generation[i] = 0;
 			mask[i] &= 0;
+		}
+		for (uint32_t j = 0; j < maxComponentTypesNum; ++j) {
+			componentStorages[j] = nullptr;
+		}
+	}
+
+	World::~World() {
+		for (uint32_t j = 0; j < maxComponentTypesNum; ++j) {
+			if (componentStorages[j] != nullptr) {
+				delete componentStorages[j];
+			}
 		}
 	}
 
@@ -29,5 +41,20 @@ namespace nexc {
 		firstFree = e.id;
 		generation[e.id] += 1;
 	}
+
+	template<typename... T>
+	inline QueryList World::getEntitiesWith() {
+		return QueryList(this, getMask(Dummy<T...>()));
+	}
+
+	template<typename T>
+	ComponentStorage<T>& World::getComponentStorage() {
+		auto family = ComponentStorage<T>::getFamily();
+		if (componentStorages[family] == nullptr) {
+			componentStorages[family] = new ComponentStorage<T>();
+		}
+		return *((ComponentStorage<T>*)componentStorages[family]);
+	}
+
 
 }
