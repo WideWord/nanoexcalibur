@@ -16,11 +16,10 @@ int main() {
 
 	world.addSystem(&engine);
 
-	sf::Texture texture;
-	texture.loadFromFile("data/test.jpg");
-
-	auto sprite = std::make_shared<sf::Sprite>();
-	sprite->setTexture(texture, true);
+	auto sprite = std::make_shared<Sprite>();
+	sprite->texture = engine.getAssetsManager()->getTexture("data/test.jpg");
+	sprite->textureSize = glm::vec2(656, 657);
+	sprite->pixelsInUnit = 100;
 
 	auto obj = world.createEntity();
 	SpriteRenderer sr;
