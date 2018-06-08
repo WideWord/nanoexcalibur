@@ -12,7 +12,7 @@ namespace nexc {
 
 	template<typename T>
 	inline Entity& Entity::set(const T& value) {
-		if (world->getComponentStorage<T>().set(id, value)) {
+		if (world->getComponentStorage<T>()->set(id, value)) {
 			auto fam = ComponentStorage<T>::getFamily();
 			world->mask[id].set(fam, true);
 			world->emitEvent(ComponentAddedEvent<T>(*this));
@@ -23,12 +23,12 @@ namespace nexc {
 
 	template<typename T>
 	inline T Entity::get() {
-		return world->getComponentStorage<T>().get(id);
+		return world->getComponentStorage<T>()->get(id);
 	}
 
 	template<typename T>
 	inline Entity& Entity::remove() {
-		world->getComponentStorage<T>().remove(id);
+		world->getComponentStorage<T>()->remove(id);
 		auto fam = ComponentStorage<T>::getFamily();
 		world->mask[id].set(fam, false);
 		world->emitEvent(ComponentRemovedEvent<T>(*this));

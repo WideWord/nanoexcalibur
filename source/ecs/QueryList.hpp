@@ -7,6 +7,7 @@ namespace nexc {
 
 	class World;
 	class Entity;
+	class AnyComponentStorage;
 
 	class QueryIterator {
 	public:
@@ -14,14 +15,19 @@ namespace nexc {
 		inline Entity operator*();
 
 		bool operator!=(const QueryIterator& o) {
-			return entity != o.entity;
+			return iid != o.iid;
 		}
 
 	private:
 		friend class QueryList;
-		QueryIterator(World* world, uint32_t entity, std::bitset<maxComponentTypesNum> mask) : world(world), entity(entity), mask(mask) {}
+		QueryIterator(World* world, AnyComponentStorage* storage, uint32_t iid, std::bitset<maxComponentTypesNum> mask)
+				: world(world),
+				  storage(storage),
+				  iid(iid),
+				  mask(mask) {}
 		World* world;
-		uint32_t entity;
+		AnyComponentStorage* storage;
+		uint32_t iid;
 		std::bitset<maxComponentTypesNum> mask;
 	};
 
@@ -30,12 +36,18 @@ namespace nexc {
 		inline QueryIterator begin();
 
 		QueryIterator end() {
-			return QueryIterator(world, maxEntitiesNum, mask);
+			return QueryIterator(world, storage, maxEntitiesNum, mask);
 		}
 	private:
 		friend class World;
-		QueryList(World* world, std::bitset<maxComponentTypesNum> mask) : world(world), mask(mask) {}
+
+		QueryList(World* world, AnyComponentStorage* storage, std::bitset<maxComponentTypesNum> mask)
+				: world(world),
+				  storage(storage),
+				  mask(mask) {}
+
 		World* world;
+		AnyComponentStorage* storage;
 		std::bitset<maxComponentTypesNum> mask;
 	};
 

@@ -8,6 +8,7 @@ namespace nexc {
 	public:
 		AnyComponentStorage() {
 			aliveNum = 0;
+			removedNum = 0;
 			for (uint32_t i = 0; i < maxEntitiesNum; ++i) {
 				internalId[i] = maxEntitiesNum;
 			}
@@ -17,11 +18,23 @@ namespace nexc {
 
 		virtual void remove(uint32_t entity) {}
 
+		virtual void pack() {}
+
+		uint32_t getAliveNum() {
+			return aliveNum;
+		}
+
 	protected:
+		friend class QueryList;
+		friend class QueryIterator;
+
 		void* data;
 		uint32_t aliveNum;
 		uint32_t internalId[maxEntitiesNum];
 		uint32_t entityId[maxEntitiesNum];
+
+		uint32_t removedInternals[maxEntitiesNum];
+		uint32_t removedNum;
 
 		static uint32_t newFamily() {
 			static uint32_t family = 0;
@@ -61,14 +74,23 @@ namespace nexc {
 
 		void remove(uint32_t entity) final {
 			auto iid = internalId[entity];
-			if (iid == maxEntitiesNum) return;
-			if (iid != aliveNum - 1) {
-				auto swap = aliveNum - 1;
-				((T*)data)[iid] = std::move(((T*)data)[swap]);
-				entityId[iid] = entityId[swap];
-				internalId[entityId[iid]] = iid;
+			internalId[entity] = maxEntitiesNum;
+			entityId[iid] = maxEntitiesNum;
+			removedInternals[removedNum++] = iid;
+		}
+
+		void pack() final {
+			for (uint32_t i = 0; i < removedNum; ++i) {
+				auto removedId = removedInternals[i];
+				if (removedId != aliveNum - 1) {
+					auto swapWithId = aliveNum - 1;
+					((T*)data)[removedId] = std::move(((T*)data)[swapWithId]);
+					entityId[removedId] = entityId[swapWithId];
+					internalId[entityId[removedId]] = removedId;
+				}
+				aliveNum -= 1;
 			}
-			aliveNum -= 1;
+			removedNum = 0;
 		}
 
 		static uint32_t getFamily() {

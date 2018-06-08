@@ -42,19 +42,21 @@ namespace nexc {
 
 		AnyComponentStorage* componentStorages[maxComponentTypesNum];
 
-		template<typename T> ComponentStorage<T>& getComponentStorage();
+		template<typename T> ComponentStorage<T>* getComponentStorage();
 
 		template<typename... T> struct Dummy {};
 
-		template<typename H, typename... T> std::bitset<maxComponentTypesNum> getMask(Dummy<H, T...>) {
-			auto bs = getMask(Dummy<T...>());
-			bs.set(ComponentStorage<H>::getFamily(), true);
-			return bs;
+		template<typename H, typename... T> void getQueryParams(Dummy<H, T...>, std::bitset<maxComponentTypesNum>& mask, uint32_t& minAliveNum, AnyComponentStorage*& storage) {
+			mask.set(ComponentStorage<H>::getFamily(), true);
+			auto curStorage = getComponentStorage<H>();
+			if (curStorage->getAliveNum() < minAliveNum) {
+				minAliveNum = curStorage->getAliveNum();
+				storage = curStorage;
+			}
+			getQueryParams(Dummy<T...>(), mask, minAliveNum, storage);
 		}
 
-		std::bitset<maxComponentTypesNum> getMask(Dummy<>) {
-			return std::bitset<maxComponentTypesNum>();
-		}
+		void getQueryParams(Dummy<>, std::bitset<maxComponentTypesNum>& mask, uint32_t& minAliveNum, AnyComponentStorage*& storage) {}
 
 		std::list<System*> systems;
 

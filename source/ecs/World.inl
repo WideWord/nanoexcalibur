@@ -49,16 +49,20 @@ namespace nexc {
 
 	template<typename... T>
 	inline QueryList World::getEntitiesWith() {
-		return QueryList(this, getMask(Dummy<T...>()));
+		std::bitset<maxComponentTypesNum> mask;
+		uint32_t minAliveNum = UINT32_MAX;
+		AnyComponentStorage* storage = nullptr;
+		getQueryParams(Dummy<T...>(), mask, minAliveNum, storage);
+		return QueryList(this, storage, mask);
 	}
 
 	template<typename T>
-	ComponentStorage<T>& World::getComponentStorage() {
+	ComponentStorage<T>* World::getComponentStorage() {
 		auto family = ComponentStorage<T>::getFamily();
 		if (componentStorages[family] == nullptr) {
 			componentStorages[family] = new ComponentStorage<T>();
 		}
-		return *((ComponentStorage<T>*)componentStorages[family]);
+		return (ComponentStorage<T>*)componentStorages[family];
 	}
 
 
@@ -96,6 +100,12 @@ namespace nexc {
 	void World::update() {
 		for (auto it = systems.begin(); it != systems.end(); ++it) {
 			(*it)->run();
+		}
+		for (uint32_t i = 0; i < maxComponentTypesNum; ++i) {
+			auto storage = componentStorages[i];
+			if (storage != nullptr) {
+				storage->pack();
+			}
 		}
 	}
 
