@@ -37,4 +37,27 @@ namespace nexc {
 		World* world;
 	};
 
+
+
+	template<typename T>
+	struct ComponentAddedEvent {
+		Entity entity;
+
+		explicit ComponentAddedEvent(Entity entity) : entity(entity) {}
+	};
+
+	template<typename T>
+	struct ComponentUpdatedEvent {
+		Entity entity;
+
+		explicit ComponentUpdatedEvent(Entity entity) : entity(entity) {}
+	};
+
+	template<typename T>
+	struct ComponentRemovedEvent {
+		Entity entity;
+
+		explicit ComponentRemovedEvent(Entity entity) : entity(entity) {}
+	};
+
 }

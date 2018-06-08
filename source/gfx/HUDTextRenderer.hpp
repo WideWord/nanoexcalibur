@@ -12,8 +12,7 @@ namespace nexc {
 		std::shared_ptr<Font> font;
 		uint32_t size = 30;
 		IVec2 position;
-
-		HUDTextRenderer() = default;
+		int16_t layer = 0;
 	};
 
 }

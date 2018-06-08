@@ -15,7 +15,9 @@ namespace nexc {
 		if (world->getComponentStorage<T>().set(id, value)) {
 			auto fam = ComponentStorage<T>::getFamily();
 			world->mask[id].set(fam, true);
+			world->emitEvent(ComponentAddedEvent<T>(*this));
 		}
+		world->emitEvent(ComponentUpdatedEvent<T>(*this));
 		return *this;
 	}
 
@@ -29,6 +31,7 @@ namespace nexc {
 		world->getComponentStorage<T>().remove(id);
 		auto fam = ComponentStorage<T>::getFamily();
 		world->mask[id].set(fam, false);
+		world->emitEvent(ComponentRemovedEvent<T>(*this));
 		return *this;
 	}
 

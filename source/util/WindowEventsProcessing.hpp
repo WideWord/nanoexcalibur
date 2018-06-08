@@ -9,7 +9,12 @@ namespace nexc {
 	public:
 		explicit WindowEventsProcessing(sf::Window& window) : window(window) {}
 
-		void run() override;
+		void run() override {
+			sf::Event e;
+			while (window.pollEvent(e)) {
+
+			}
+		}
 
 	private:
 		sf::Window& window;

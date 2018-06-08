@@ -68,6 +68,7 @@ namespace nexc {
 
 				text.setPosition(textRenderer.position.x, textRenderer.position.y);
 				text.setFont(textRenderer.font->internal);
+
 				text.setString(textRenderer.text);
 				text.setCharacterSize(textRenderer.size);
 				text.setFillColor(sf::Color::Red);
