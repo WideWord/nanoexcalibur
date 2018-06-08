@@ -3,7 +3,7 @@
 namespace nexc {
 
 	struct Camera2D {
-		float pixelsInUnit = 100;
+		float size = 5;
 		bool keepHorizontalSize = false;
 	};
 

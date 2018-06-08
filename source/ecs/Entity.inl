@@ -11,11 +11,12 @@ namespace nexc {
 	}
 
 	template<typename T>
-	inline void Entity::set(const T& value) {
+	inline Entity& Entity::set(const T& value) {
 		if (world->getComponentStorage<T>().set(id, value)) {
 			auto fam = ComponentStorage<T>::getFamily();
 			world->mask[id].set(fam, true);
 		}
+		return *this;
 	}
 
 	template<typename T>
@@ -24,10 +25,17 @@ namespace nexc {
 	}
 
 	template<typename T>
-	inline void Entity::remove() {
+	inline Entity& Entity::remove() {
 		world->getComponentStorage<T>().remove(id);
 		auto fam = ComponentStorage<T>::getFamily();
 		world->mask[id].set(fam, false);
+		return *this;
+	}
+
+	template<typename T>
+	inline bool Entity::has() {
+		if (!isAlive()) return false;
+		return world->mask[id][ComponentStorage<T>::getFamily()];
 	}
 
 }

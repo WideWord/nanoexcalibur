@@ -2,6 +2,9 @@
 #include "../common/Transform2D.hpp"
 #include "Camera2D.hpp"
 #include "Texture.hpp"
+#include "Font.hpp"
+#include "SpriteRenderer.hpp"
+#include "HUDTextRenderer.hpp"
 
 namespace nexc {
 
@@ -23,13 +26,11 @@ namespace nexc {
 			view.setRotation(cameraTransform.rotation);
 			auto screenSize = window.getSize();
 			if (camera.keepHorizontalSize) {
-				float horSize = camera.pixelsInUnit / (float)screenSize.x;
-				float verSize = horSize / (float)screenSize.x * (float)screenSize.y;
-				view.setSize(horSize, verSize);
+				view.setSize(camera.size, camera.size / (float)screenSize.x * (float)screenSize.y);
 			} else {
-				float verSize = camera.pixelsInUnit / (float)screenSize.y;
-				float horSize = verSize / (float)screenSize.y * (float)screenSize.x;
-				view.setSize(horSize, verSize);
+				float verSize = (float)screenSize.y / camera.size;
+				float horSize = verSize ;
+				view.setSize(camera.size / (float)screenSize.y * (float)screenSize.x, camera.size);
 			}
 
 			window.setView(view);
@@ -42,6 +43,7 @@ namespace nexc {
 				if (sprite == nullptr) continue;
 				if (sprite->texture == nullptr) continue;
 
+				s.setOrigin(sprite->origin.x * sprite->pixelsInUnit, sprite->origin.y * sprite->pixelsInUnit);
 				s.setPosition(transform.position.x, transform.position.y);
 				s.setRotation(transform.rotation);
 				s.setTexture(sprite->texture->internal);
@@ -55,6 +57,22 @@ namespace nexc {
 				s.setScale(scale, scale);
 
 				window.draw(s);
+			}
+
+			sf::Text text;
+
+			window.setView(sf::View());
+
+			for (auto e : getWorld()->getEntitiesWith<HUDTextRenderer>()) {
+				auto textRenderer = e.get<HUDTextRenderer>();
+
+				text.setPosition(textRenderer.position.x, textRenderer.position.y);
+				text.setFont(textRenderer.font->internal);
+				text.setString(textRenderer.text);
+				text.setCharacterSize(textRenderer.size);
+				text.setFillColor(sf::Color::Red);
+
+				window.draw(text);
 			}
 
 		}

@@ -7,10 +7,6 @@
 
 namespace nexc {
 
-	struct SpriteRenderer {
-		std::shared_ptr<Sprite> sprite;
-	};
-
 	class Rendering : public System {
 	public:
 		explicit Rendering(sf::RenderWindow& window) : window(window) {}

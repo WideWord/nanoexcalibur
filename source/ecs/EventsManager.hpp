@@ -18,8 +18,11 @@ namespace nexc {
 
 		template<typename T>
 		struct EventFamily : AnyEventFamily {
-			static uint32_t getFamily() {
-				static uint32_t family = newFamily();
+			static uint32_t getFamily(bool createNew = true) {
+				static uint32_t family = maxEventTypesNum;
+				if (family == maxEventTypesNum && createNew) {
+					family = newFamily();
+				}
 				return family;
 			}
 		};
@@ -43,7 +46,8 @@ namespace nexc {
 
 		template<typename T>
 		void emit(const T& e) {
-			auto fam = EventFamily<T>::getFamily();
+			auto fam = EventFamily<T>::getFamily(false);
+			if (fam == maxEventTypesNum) return;
 			for (auto it = signals[fam].begin(); it != signals[fam].end(); ++it) {
 				it->callback((const void*)(&e));
 			}

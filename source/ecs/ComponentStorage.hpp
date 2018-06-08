@@ -64,7 +64,7 @@ namespace nexc {
 			if (iid == maxEntitiesNum) return;
 			if (iid != aliveNum - 1) {
 				auto swap = aliveNum - 1;
-				((T*)data)[iid] = ((T*)data)[swap];
+				((T*)data)[iid] = std::move(((T*)data)[swap]);
 				entityId[iid] = entityId[swap];
 				internalId[entityId[iid]] = iid;
 			}

@@ -18,13 +18,16 @@ namespace nexc {
 		inline bool isAlive() const;
 
 		template<typename T>
-		inline void set(const T& value);
+		inline Entity& set(const T& value);
 
 		template<typename T>
 		inline T get();
 
 		template<typename T>
-		inline void remove();
+		inline Entity& remove();
+
+		template<typename T>
+		inline bool has();
 
 	private:
 		friend class World;
