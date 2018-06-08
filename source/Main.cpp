@@ -7,9 +7,49 @@
 #include "gfx/HUDTextRenderer.hpp"
 #include "gfx/SpriteRenderer.hpp"
 #include "Engine.hpp"
+#include "util/FramePerformanceHandling.hpp"
 
 using namespace nexc;
 
+
+struct Player {};
+
+class PlayerMovement : public System {
+public:
+	explicit PlayerMovement(Engine& engine) : engine(engine) {}
+
+	void run() override {
+		for (auto e : getWorld()->getEntitiesWith<Player, Transform2D>()) {
+
+			auto transform = e.get<Transform2D>();
+
+			Vec2 movement;
+
+			if (engine.getInputManager().getKey(KeyCode::A)) {
+				movement.x -= 1;
+			}
+
+			if (engine.getInputManager().getKey(KeyCode::D)) {
+				movement.x += 1;
+			}
+
+			if (engine.getInputManager().getKey(KeyCode::W)) {
+				movement.y -= 1;
+			}
+
+			if (engine.getInputManager().getKey(KeyCode::S)) {
+				movement.y += 1;
+			}
+
+			transform.position += movement * engine.getTimeManager().getDeltaTime();
+
+			e.set(transform);
+		}
+	}
+
+private:
+	Engine& engine;
+};
 
 int main() {
 
@@ -17,23 +57,34 @@ int main() {
 
 	Engine engine;
 
+	PlayerMovement playerMovement(engine);
+	FramePerformanceHandling framePerformanceHandling(engine);
+
 	world.addSystem(&engine);
+	world.addSystem(&playerMovement);
+	world.addSystem(&framePerformanceHandling);
 
 	auto sprite = std::make_shared<Sprite>();
-	sprite->texture = engine.getAssetsManager()->getTexture("data/test.jpg");
-	sprite->textureSize = glm::vec2(656, 657);
+	sprite->texture = engine.getAssetsManager().getTexture("data/test.jpg");
+	sprite->rect = IRect(0, 0, 656, 656);
+	sprite->pivot = Vec2(328, 328);
+
 	sprite->pixelsInUnit = 656;
-	sprite->origin = glm::vec2(0.5f, 0.5f);
 
-	world.createEntity().set(Transform2D()).set(SpriteRenderer(sprite));
+	world.createEntity()
+			.set(Transform2D())
+			.set(SpriteRenderer(sprite))
+			.set(Player());
 
-	world.createEntity().set(Transform2D()).set(Camera2D());
+	/*for (int i = 0; i < 1000; ++i) {
+		world.createEntity()
+				.set(Transform2D())
+				.set(SpriteRenderer(sprite));
+	}*/
 
-	HUDTextRenderer tr;
-	tr.font = engine.getAssetsManager()->getFont("data/Arial.ttf");
-	tr.text = "ABC ДЕФ";
-
-	world.createEntity().set(tr);
+	world.createEntity()
+			.set(Transform2D())
+			.set(Camera2D());
 
 	while (true) {
 		world.update();

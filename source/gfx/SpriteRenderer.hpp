@@ -8,9 +8,10 @@ namespace nexc {
 
 	struct SpriteRenderer {
 		std::shared_ptr<Sprite> sprite;
+		int16_t layer = 0;
 
 		SpriteRenderer() = default;
-		explicit SpriteRenderer(std::shared_ptr<Sprite> sprite) : sprite(std::move(sprite)) {}
+		explicit SpriteRenderer(std::shared_ptr<Sprite> sprite, int16_t layer = 0) : sprite(std::move(sprite)), layer(layer) {}
 	};
 
 }

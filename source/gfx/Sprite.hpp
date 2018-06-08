@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <glm/glm.hpp>
+#include "../util/Math.hpp"
 
 namespace nexc {
 
@@ -10,10 +10,9 @@ namespace nexc {
 	class Sprite {
 	public:
 		std::shared_ptr<Texture> texture;
-		glm::vec2 origin;
 		float pixelsInUnit;
-		glm::vec2 textureOrigin;
-		glm::vec2 textureSize;
+		IRect rect;
+		Vec2 pivot;
 	};
 
 }

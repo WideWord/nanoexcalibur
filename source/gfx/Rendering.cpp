@@ -43,15 +43,15 @@ namespace nexc {
 				if (sprite == nullptr) continue;
 				if (sprite->texture == nullptr) continue;
 
-				s.setOrigin(sprite->origin.x * sprite->pixelsInUnit, sprite->origin.y * sprite->pixelsInUnit);
+				s.setOrigin(sprite->pivot.x, sprite->pivot.y);
 				s.setPosition(transform.position.x, transform.position.y);
 				s.setRotation(transform.rotation);
 				s.setTexture(sprite->texture->internal);
 				sf::IntRect rect;
-				rect.left = (int)sprite->textureOrigin.x;
-				rect.top = (int)sprite->textureOrigin.y;
-				rect.width = (int)sprite->textureSize.x;
-				rect.height = (int)sprite->textureSize.y;
+				rect.left = sprite->rect.origin.x;
+				rect.top = sprite->rect.origin.y;
+				rect.width = sprite->rect.size.x;
+				rect.height = sprite->rect.size.y;
 				s.setTextureRect(rect);
 				float scale = 1.0f / sprite->pixelsInUnit;
 				s.setScale(scale, scale);

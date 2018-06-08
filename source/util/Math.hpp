@@ -13,6 +13,10 @@ namespace nexc {
 	struct IRect {
 		IVec2 origin;
 		IVec2 size;
+
+		IRect() = default;
+		IRect(int x, int y, int width, int height) : origin(x, y), size(width, height) {}
+		IRect(IVec2 origin, IVec2 size) : origin(origin), size(size) {}
 	};
 
 }

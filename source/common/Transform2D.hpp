@@ -1,11 +1,11 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include "../util/Math.hpp"
 
 namespace nexc {
 
 	struct Transform2D {
-		glm::vec2 position;
+		Vec2 position;
 		float rotation;
 	};
 
