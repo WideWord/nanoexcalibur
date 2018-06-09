@@ -8,6 +8,7 @@
 #include "gfx/SpriteRenderer.hpp"
 #include "engine/Engine.hpp"
 #include "util/FramePerformanceHandling.hpp"
+#include "gfx/Sprite.hpp"
 
 using namespace nexc;
 
@@ -77,10 +78,10 @@ int main() {
 			.set(Player());
 
 	/*for (int i = 0; i < 1000; ++i) {
-	                                                                                                                                                                                                                                                                                                                                                                                                        orld.createEntity()
+		world.createEntity()
 				.set(Transform2D())
 				.set(SpriteRenderer(sprite));
-	}
+	}*/
 
 	world.createEntity()
 			.set(Transform2D())

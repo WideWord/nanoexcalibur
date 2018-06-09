@@ -3,18 +3,21 @@
 #include "../ecs/ecs.hpp"
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include "Sprite.hpp"
+#include "Shader.hpp"
 
 namespace nexc {
 
 	class Rendering : public System {
 	public:
-		explicit Rendering(sf::RenderWindow& window) : window(window) {}
+		explicit Rendering(sf::Window& window);
 
 		void run() override;
 
 	private:
-		sf::RenderWindow& window;
+		sf::Window& window;
+		Shader shader;
+		uint32_t vao;
+		uint32_t vbo;
 	};
 
 }

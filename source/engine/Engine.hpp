@@ -7,41 +7,55 @@
 #include "AssetsManager.hpp"
 #include "InputManager.hpp"
 #include "TimeManager.hpp"
+#include "../3rdparty/glad/glad.h"
+#include "../util/Memory.hpp"
 
 namespace nexc {
 
 	class Engine : public System {
 	public:
-		Engine() : window(sf::VideoMode(800 * 3, 600 * 3), "nano excalibur"), rendering(window), windowEventsProcessing(window), inputManager(window) {}
+		Engine() {
+
+			window = URef<sf::Window>(new sf::Window(sf::VideoMode(800 * 3, 600 * 3), "nano excalibur", sf::Style::Default, sf::ContextSettings(24, 8, 4, 3, 3)));
+
+			gladLoadGL();
+
+			rendering = URef<Rendering>(new Rendering(*window));
+			windowEventsProcessing = URef<WindowEventsProcessing>(new WindowEventsProcessing(*window));
+			assetsManager = URef<AssetsManager>(new AssetsManager());
+			inputManager = URef<InputManager>(new InputManager(*window));
+			timeManager = URef<TimeManager>(new TimeManager());
+
+		}
 
 		static constexpr int32_t beginFrameQueue = -1000000;
 		static constexpr int32_t endFrameQueue = 1000000;
 
 		void configure() override {
-			addChildSystem(&windowEventsProcessing, beginFrameQueue);
-			addChildSystem(&timeManager, beginFrameQueue);
+			addChildSystem(windowEventsProcessing.get(), beginFrameQueue);
+			addChildSystem(timeManager.get(), beginFrameQueue);
 
-			addChildSystem(&rendering, endFrameQueue);
+			addChildSystem(rendering.get(), endFrameQueue);
 		}
 
 		AssetsManager& getAssetsManager() {
-			return assetsManager;
+			return *assetsManager;
 		}
 
 		InputManager& getInputManager() {
-			return inputManager;
+			return *inputManager;
 		}
 
 		TimeManager& getTimeManager() {
-			return timeManager;
+			return *timeManager;
 		}
 	private:
-		sf::RenderWindow window;
-		Rendering rendering;
-		WindowEventsProcessing windowEventsProcessing;
-		AssetsManager assetsManager;
-		InputManager inputManager;
-		TimeManager timeManager;
+		std::unique_ptr<sf::Window> window;
+		std::unique_ptr<Rendering> rendering;
+		std::unique_ptr<WindowEventsProcessing> windowEventsProcessing;
+		std::unique_ptr<AssetsManager> assetsManager;
+		std::unique_ptr<InputManager> inputManager;
+		std::unique_ptr<TimeManager> timeManager;
 	};
 
 }

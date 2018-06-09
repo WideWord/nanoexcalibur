@@ -1,17 +1,18 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <cstdint>
+#include <string>
 
 namespace nexc {
 
 	class Texture {
 	public:
-		void loadFromFile(const std::string& filename) {
-			internal.loadFromFile(filename);
-		}
+		Texture();
+		~Texture();
+		void loadFromMemory(int width, int height, void* pixels);
+		void loadFromFile(const std::string& filename);
 	private:
-		friend class Rendering;
-		sf::Texture internal;
+		uint32_t id;
 	};
 
 }
