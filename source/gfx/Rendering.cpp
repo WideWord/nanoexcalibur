@@ -5,6 +5,9 @@
 #include "Font.hpp"
 #include "SpriteRenderer.hpp"
 #include "HUDTextRenderer.hpp"
+#include <locale>
+#include <codecvt>
+#include <string>
 
 namespace nexc {
 
@@ -63,13 +66,15 @@ namespace nexc {
 
 			window.setView(sf::View());
 
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+
 			for (auto e : getWorld()->getEntitiesWith<HUDTextRenderer>()) {
 				auto textRenderer = e.get<HUDTextRenderer>();
 
 				text.setPosition(textRenderer.position.x, textRenderer.position.y);
 				text.setFont(textRenderer.font->internal);
-
-				text.setString(textRenderer.text);
+				auto wtext = converter.from_bytes(textRenderer.text);
+				text.setString(wtext);
 				text.setCharacterSize(textRenderer.size);
 				text.setFillColor(sf::Color::Red);
 

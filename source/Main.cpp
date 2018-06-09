@@ -6,7 +6,7 @@
 #include "gfx/Camera2D.hpp"
 #include "gfx/HUDTextRenderer.hpp"
 #include "gfx/SpriteRenderer.hpp"
-#include "Engine.hpp"
+#include "engine/Engine.hpp"
 #include "util/FramePerformanceHandling.hpp"
 
 using namespace nexc;
@@ -77,10 +77,10 @@ int main() {
 			.set(Player());
 
 	/*for (int i = 0; i < 1000; ++i) {
-		world.createEntity()
+	                                                                                                                                                                                                                                                                                                                                                                                                        orld.createEntity()
 				.set(Transform2D())
 				.set(SpriteRenderer(sprite));
-	}*/
+	}
 
 	world.createEntity()
 			.set(Transform2D())

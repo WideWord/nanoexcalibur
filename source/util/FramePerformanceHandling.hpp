@@ -2,7 +2,7 @@
 
 #include "../ecs/ecs.hpp"
 #include "../gfx/HUDTextRenderer.hpp"
-#include "../Engine.hpp"
+#include "../engine/Engine.hpp"
 #include "../util/MakeString.hpp"
 
 namespace nexc {
@@ -14,12 +14,8 @@ namespace nexc {
 		void configure() override {
 			statsText = getWorld()->createEntity();
 			HUDTextRenderer text;
-			text.font = engine.getAssetsManager().getFont("data/Arial.ttf");
+			text.font = engine.getAssetsManager().getFont("data/bignoodletoo.ttf");
 			statsText.set(text);
-		}
-
-		void shutdown() override {
-			getWorld()->destroyEntity(statsText);
 		}
 
 		void run() override {
@@ -34,7 +30,7 @@ namespace nexc {
 			if (deltaTime > peakTime) peakTime = deltaTime;
 
 			auto text = statsText.get<HUDTextRenderer>();
-			text.text = MakeString() << "Frame time: " << std::ceil(deltaTime * 1000.0f) << " ms\n"
+			text.text = MakeString() << "ЙЦУКЕНфывап Frame time: " << std::ceil(deltaTime * 1000.0f) << " ms\n"
 				<< "Peak frame time: " << std::ceil(peakTime * 1000.0f) << " ms";
 
 			statsText.set(text);

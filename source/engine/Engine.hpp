@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ecs/ecs.hpp"
+#include "../ecs/ecs.hpp"
 #include <SFML/Graphics.hpp>
-#include "gfx/Rendering.hpp"
-#include "util/WindowEventsProcessing.hpp"
-#include "util/AssetsManager.hpp"
-#include "util/InputManager.hpp"
-#include "util/TimeManager.hpp"
+#include "../gfx/Rendering.hpp"
+#include "WindowEventsProcessing.hpp"
+#include "AssetsManager.hpp"
+#include "InputManager.hpp"
+#include "TimeManager.hpp"
 
 namespace nexc {
 
