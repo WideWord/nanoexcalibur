@@ -38,6 +38,10 @@ namespace nexc {
 		QueryIterator end() {
 			return QueryIterator(world, storage, maxEntitiesNum, mask);
 		}
+
+		Entity first() {
+			return *begin();
+		}
 	private:
 		friend class World;
 

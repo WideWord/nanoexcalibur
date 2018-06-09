@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include "../util/Math.hpp"
 
 namespace nexc {
 
@@ -11,8 +12,17 @@ namespace nexc {
 		~Texture();
 		void loadFromMemory(int width, int height, void* pixels);
 		void loadFromFile(const std::string& filename);
+
+		uint32_t getId() {
+			return id;
+		}
+
+		IVec2 getSize() {
+			return size;
+		}
 	private:
 		uint32_t id;
+		IVec2 size;
 	};
 
 }

@@ -35,11 +35,11 @@ public:
 			}
 
 			if (engine.getInputManager().getKey(KeyCode::W)) {
-				movement.y -= 1;
+				movement.y += 1;
 			}
 
 			if (engine.getInputManager().getKey(KeyCode::S)) {
-				movement.y += 1;
+				movement.y -= 1;
 			}
 
 			transform.position += movement * engine.getTimeManager().getDeltaTime();
@@ -67,7 +67,7 @@ int main() {
 
 	auto sprite = std::make_shared<Sprite>();
 	sprite->texture = engine.getAssetsManager().getTexture("data/test.jpg");
-	sprite->rect = IRect(0, 0, 656, 656);
+	sprite->rect = IRect(0, 300, 656, 356);
 	sprite->pivot = Vec2(328, 328);
 
 	sprite->pixelsInUnit = 656;
@@ -76,6 +76,15 @@ int main() {
 			.set(Transform2D())
 			.set(SpriteRenderer(sprite))
 			.set(Player());
+
+	auto sand = std::make_shared<Sprite>();
+	sand->texture = engine.getAssetsManager().getTexture("data/sand.jpg");
+	sand->rect = IRect(0, 0, 50, 50);
+	sand->pixelsInUnit = 100;
+
+	world.createEntity()
+			.set(Transform2D())
+			.set(SpriteRenderer(sand));
 
 	/*for (int i = 0; i < 1000; ++i) {
 		world.createEntity()
