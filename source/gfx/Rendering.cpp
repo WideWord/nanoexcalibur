@@ -99,17 +99,34 @@ namespace nexc {
 			auto transform = e.get<Transform2D>();
 			auto spriteRenderer = e.get<SpriteRenderer>();
 
+			if (spriteRenderer.sprite == nullptr) continue;
+			if (spriteRenderer.sprite->texture == nullptr) continue;
+
 			drawTasks.emplace_back();
 			DrawTask& task = drawTasks.back();
 
+			task.type = DrawTask::Type::Sprite;
 			task.transform = transform;
-			task.sprite = spriteRenderer.sprite;
+			task.sprite = spriteRenderer;
 			task.layer = spriteRenderer.layer;
+			task.texture = spriteRenderer.sprite->texture;
+		}
+
+		for (auto e : getWorld()->getEntitiesWith<HUDImageRenderer>()) {
+			auto hudImage = e.get<HUDImageRenderer>();
+
+			drawTasks.emplace_back();
+			DrawTask& task = drawTasks.back();
+
+			task.type = DrawTask::Type::HUDImage;
+			task.hudImage = hudImage;
+			task.layer = hudImage.layer;
+			task.texture = hudImage.sprite->texture;
 		}
 
 		std::sort(drawTasks.begin(), drawTasks.end(), [](const DrawTask& a, const DrawTask& b) {
 			if (a.layer == b.layer) {
-				return a.sprite->texture->getId() < b.sprite->texture->getId();
+				return a.texture->getId() < b.texture->getId();
 		    } else {
 				return a.layer < b.layer;
 			}
@@ -120,42 +137,85 @@ namespace nexc {
 
 		uint32_t elementsCtr = 0;
 
+		Mat3 hudTransform = scale(Mat3(), Vec2(2.0f / (float)window.getSize().x, 2.0f / (float)window.getSize().y));
+		hudTransform = translate(hudTransform, -Vec2((float)window.getSize().x, (float)window.getSize().y) * 0.5f);
+
 		for (auto& task : drawTasks) {
-			Vec2 fSize(task.sprite->rect.size.x, task.sprite->rect.size.y);
-			Vec2 a = -task.sprite->pivot / task.sprite->pixelsInUnit;
-			Vec2 c = a + fSize / task.sprite->pixelsInUnit;
-			Vec2 b(a.x, c.y);
-			Vec2 d(c.x, a.y);
+			if (task.type == DrawTask::Type::Sprite) {
+				Vec2 fSize(task.sprite.sprite->rect.size.x, task.sprite.sprite->rect.size.y);
+				Vec2 a = -task.sprite.sprite->pivot / task.sprite.sprite->pixelsInUnit;
+				Vec2 c = a + fSize / task.sprite.sprite->pixelsInUnit;
+				Vec2 b(a.x, c.y);
+				Vec2 d(c.x, a.y);
 
-			Mat3 transform = viewProjectionMatrix * translate(rotate(Mat3(), task.transform.rotation), task.transform.position);
+				Mat3 transform = viewProjectionMatrix *
+								 translate(rotate(Mat3(), task.transform.rotation), task.transform.position);
 
-			a = Vec2(transform * Vec3(a, 1));
-			b = Vec2(transform * Vec3(b, 1));
-			c = Vec2(transform * Vec3(c, 1));
-			d = Vec2(transform * Vec3(d, 1));
+				a = Vec2(transform * Vec3(a, 1));
+				b = Vec2(transform * Vec3(b, 1));
+				c = Vec2(transform * Vec3(c, 1));
+				d = Vec2(transform * Vec3(d, 1));
 
-			auto rect = task.sprite->rect;
-			auto textureSize = task.sprite->texture->getSize();
-			Vec2 ta((float)rect.origin.x / (float)textureSize.x, (float)rect.origin.y / (float)textureSize.y);
-			Vec2 tc((float)(rect.origin.x + rect.size.x) / (float)textureSize.x, (float)(rect.origin.y + rect.size.y) / (float)textureSize.y);
-			Vec2 tb(ta.x, tc.y);
-			Vec2 td(tc.x, ta.y);
+				auto rect = task.sprite.sprite->rect;
+				auto textureSize = task.sprite.sprite->texture->getSize();
+				Vec2 ta((float) rect.origin.x / (float) textureSize.x, (float) rect.origin.y / (float) textureSize.y);
+				Vec2 tc((float) (rect.origin.x + rect.size.x) / (float) textureSize.x,
+						(float) (rect.origin.y + rect.size.y) / (float) textureSize.y);
+				Vec2 tb(ta.x, tc.y);
+				Vec2 td(tc.x, ta.y);
 
-			auto id = (uint16_t)verticies.size();
+				auto id = (uint16_t) verticies.size();
 
-			verticies.push_back(Vertex(a, ta));
-			verticies.push_back(Vertex(b, tb));
-			verticies.push_back(Vertex(c, tc));
-			verticies.push_back(Vertex(d, td));
+				verticies.push_back(Vertex(a, ta));
+				verticies.push_back(Vertex(b, tb));
+				verticies.push_back(Vertex(c, tc));
+				verticies.push_back(Vertex(d, td));
 
-			indicies.push_back(id);
-			indicies.push_back(id + (uint16_t)2);
-			indicies.push_back(id + (uint16_t)1);
-			indicies.push_back(id);
-			indicies.push_back(id + (uint16_t)3);
-			indicies.push_back(id + (uint16_t)2);
+				indicies.push_back(id);
+				indicies.push_back(id + (uint16_t) 2);
+				indicies.push_back(id + (uint16_t) 1);
+				indicies.push_back(id);
+				indicies.push_back(id + (uint16_t) 3);
+				indicies.push_back(id + (uint16_t) 2);
 
-			task.elementsNum = 6;
+				task.elementsNum = 6;
+
+			} else if (task.type == DrawTask::Type::HUDImage) {
+				auto hudImage = task.hudImage;
+				Vec2 a(hudImage.frame.origin.x, hudImage.frame.origin.y);
+				Vec2 c(hudImage.frame.size.x + hudImage.frame.origin.x, hudImage.frame.size.y + hudImage.frame.origin.y);
+				Vec2 b(a.x, c.y);
+				Vec2 d(c.x, a.y);
+
+				a = Vec2(hudTransform * Vec3(a, 1));
+				b = Vec2(hudTransform * Vec3(b, 1));
+				c = Vec2(hudTransform * Vec3(c, 1));
+				d = Vec2(hudTransform * Vec3(d, 1));
+
+				auto rect = hudImage.sprite->rect;
+				auto textureSize = hudImage.sprite->texture->getSize();
+				Vec2 ta((float) rect.origin.x / (float) textureSize.x, (float) rect.origin.y / (float) textureSize.y);
+				Vec2 tc((float) (rect.origin.x + rect.size.x) / (float) textureSize.x,
+						(float) (rect.origin.y + rect.size.y) / (float) textureSize.y);
+				Vec2 tb(ta.x, tc.y);
+				Vec2 td(tc.x, ta.y);
+
+				auto id = (uint16_t) verticies.size();
+
+				verticies.push_back(Vertex(a, ta));
+				verticies.push_back(Vertex(b, tb));
+				verticies.push_back(Vertex(c, tc));
+				verticies.push_back(Vertex(d, td));
+
+				indicies.push_back(id);
+				indicies.push_back(id + (uint16_t) 2);
+				indicies.push_back(id + (uint16_t) 1);
+				indicies.push_back(id);
+				indicies.push_back(id + (uint16_t) 3);
+				indicies.push_back(id + (uint16_t) 2);
+
+				task.elementsNum = 6;
+			}
 		}
 
 		glBindVertexArray(vao);
@@ -173,15 +233,15 @@ namespace nexc {
 		uint32_t dcSize = 0;
 		Ref<Texture> lastTexture;
 		for (auto& drawTask : drawTasks)  {
-			if (lastTexture == nullptr || lastTexture == drawTask.sprite->texture) {
-				lastTexture = drawTask.sprite->texture;
+			if (lastTexture == nullptr || lastTexture == drawTask.texture) {
+				lastTexture = drawTask.texture;
 				dcSize += drawTask.elementsNum;
 			} else {
 				glBindTexture(GL_TEXTURE_2D, lastTexture->getId());
 				glDrawElements(GL_TRIANGLES, dcSize, GL_UNSIGNED_SHORT, reinterpret_cast<void*>(dcStart * sizeof(uint16_t)));
 				dcStart += dcSize;
 				dcSize = drawTask.elementsNum;
-				lastTexture = drawTask.sprite->texture;
+				lastTexture = drawTask.texture;
 			}
 		}
 		if (lastTexture != nullptr) {
@@ -191,6 +251,8 @@ namespace nexc {
 
 
 		glBindVertexArray(0);
+
+
 
 		drawTasks.clear();
 

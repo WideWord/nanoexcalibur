@@ -67,7 +67,7 @@ int main() {
 
 	auto sprite = std::make_shared<Sprite>();
 	sprite->texture = engine.getAssetsManager().getTexture("data/test.jpg");
-	sprite->rect = IRect(0, 300, 656, 356);
+	sprite->rect = IRect(0, 0, 656, 656);
 	sprite->pivot = Vec2(328, 328);
 
 	sprite->pixelsInUnit = 656;
@@ -76,6 +76,12 @@ int main() {
 			.set(Transform2D())
 			.set(SpriteRenderer(sprite))
 			.set(Player());
+
+	auto hudImage = HUDImageRenderer();
+	hudImage.sprite = sprite;
+	hudImage.frame = IRect(0, 0, 50, 100);
+	world.createEntity()
+			.set(hudImage);
 
 	auto sand = std::make_shared<Sprite>();
 	sand->texture = engine.getAssetsManager().getTexture("data/sand.jpg");

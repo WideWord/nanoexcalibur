@@ -7,10 +7,15 @@
 #include <vector>
 #include "../common/Transform2D.hpp"
 #include "../util/Memory.hpp"
+#include "SpriteRenderer.hpp"
+#include "HUDTextRenderer.hpp"
+#include "HUDImageRenderer.hpp"
 
 namespace nexc {
 
 	class Sprite;
+
+	class Texture;
 
 	class Rendering : public System {
 	public:
@@ -37,8 +42,18 @@ namespace nexc {
 		struct DrawTask {
 			uint32_t elementsNum;
 			int16_t layer;
+
+			enum class Type {
+				Sprite, HUDText, HUDImage
+			};
+			Type type;
+
 			Transform2D transform;
-			Ref<Sprite> sprite;
+			SpriteRenderer sprite;
+			HUDTextRenderer hudText;
+			HUDImageRenderer hudImage;
+			Ref<Texture> texture;
+
 		};
 
 		std::vector<DrawTask> drawTasks;
