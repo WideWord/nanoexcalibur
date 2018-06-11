@@ -14,9 +14,10 @@
 #include "Sprite.hpp"
 #include <vector>
 
+
 namespace nexc {
 
-	Rendering::Rendering(sf::Window& window) : window(window) {
+	Rendering::Rendering(sf::RenderWindow& window) : window(window) {
 		window.setActive(true);
 
 		auto vs = R"""(
@@ -229,6 +230,12 @@ namespace nexc {
 
 		glActiveTexture(GL_TEXTURE0);
 
+
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
+
 		uint32_t dcStart = 0;
 		uint32_t dcSize = 0;
 		Ref<Texture> lastTexture;
@@ -252,11 +259,11 @@ namespace nexc {
 
 		glBindVertexArray(0);
 
-
-
 		drawTasks.clear();
 
 		window.display();
 	}
+
+
 
 }

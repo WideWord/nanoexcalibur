@@ -7,17 +7,20 @@ namespace nexc {
 
 	class WindowEventsProcessing : public System {
 	public:
-		explicit WindowEventsProcessing(sf::Window& window) : window(window) {}
+		explicit WindowEventsProcessing(sf::RenderWindow& window) : window(window) {}
 
 		void run() override {
 			sf::Event e;
 			while (window.pollEvent(e)) {
 
 			}
+
+
 		}
 
 	private:
-		sf::Window& window;
+		sf::RenderWindow& window;
+		sf::Clock deltaClock;
 	};
 
 }

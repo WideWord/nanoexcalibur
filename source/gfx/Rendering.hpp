@@ -19,12 +19,12 @@ namespace nexc {
 
 	class Rendering : public System {
 	public:
-		explicit Rendering(sf::Window& window);
+		explicit Rendering(sf::RenderWindow& window);
 
 		void run() override;
 
 	private:
-		sf::Window& window;
+		sf::RenderWindow& window;
 		Shader shader;
 		uint32_t vao;
 		uint32_t vertexVBO;

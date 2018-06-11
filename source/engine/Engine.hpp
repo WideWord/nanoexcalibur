@@ -16,7 +16,7 @@ namespace nexc {
 	public:
 		Engine() {
 
-			window = URef<sf::Window>(new sf::Window(sf::VideoMode(800 * 3, 600 * 3), "nano excalibur", sf::Style::Default, sf::ContextSettings(24, 8, 4, 3, 3)));
+			window = URef<sf::RenderWindow>(new sf::RenderWindow(sf::VideoMode(800 * 3, 600 * 3), "nano excalibur", sf::Style::Default, sf::ContextSettings(24, 8, 4, 3, 3)));
 
 			gladLoadGL();
 
@@ -50,7 +50,7 @@ namespace nexc {
 			return *timeManager;
 		}
 	private:
-		std::unique_ptr<sf::Window> window;
+		std::unique_ptr<sf::RenderWindow> window;
 		std::unique_ptr<Rendering> rendering;
 		std::unique_ptr<WindowEventsProcessing> windowEventsProcessing;
 		std::unique_ptr<AssetsManager> assetsManager;
