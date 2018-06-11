@@ -1,13 +1,13 @@
 #pragma once
 
-#include <memory>
+#include "../util/Memory.hpp"
 
 namespace nexc {
 
 	class Sprite;
 
 	struct SpriteRenderer {
-		std::shared_ptr<Sprite> sprite;
+		Ref<Sprite> sprite;
 		int16_t layer = 0;
 
 		SpriteRenderer() = default;

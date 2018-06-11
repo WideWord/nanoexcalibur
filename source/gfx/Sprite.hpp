@@ -1,6 +1,6 @@
 #pragma once
 
-#include <memory>
+#include "../util/Memory.hpp"
 #include "../util/Math.hpp"
 
 namespace nexc {
@@ -9,7 +9,7 @@ namespace nexc {
 
 	class Sprite {
 	public:
-		std::shared_ptr<Texture> texture;
+		Ref<Texture> texture;
 		float pixelsInUnit;
 		IRect rect;
 		Vec2 pivot;
