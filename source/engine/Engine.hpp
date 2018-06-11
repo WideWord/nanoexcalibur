@@ -7,6 +7,7 @@
 #include "AssetsManager.hpp"
 #include "InputManager.hpp"
 #include "TimeManager.hpp"
+#include "../Sound/SoundProcessing.hpp"
 
 namespace nexc {
 
@@ -22,6 +23,7 @@ namespace nexc {
 			addChildSystem(&timeManager, beginFrameQueue);
 
 			addChildSystem(&rendering, endFrameQueue);
+			addChildSystem(&soundProcessing, endFrameQueue);
 		}
 
 		AssetsManager& getAssetsManager() {
@@ -42,6 +44,7 @@ namespace nexc {
 		AssetsManager assetsManager;
 		InputManager inputManager;
 		TimeManager timeManager;
+		SoundProcessing soundProcessing;
 	};
 
 }

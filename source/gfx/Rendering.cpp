@@ -83,7 +83,7 @@ namespace nexc {
 
 		}
 
-		window.display();
+ 		window.display();
 	}
 
 }

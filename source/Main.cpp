@@ -7,7 +7,7 @@
 #include "gfx/HUDTextRenderer.hpp"
 #include "gfx/SpriteRenderer.hpp"
 #include "engine/Engine.hpp"
-#include "util/FramePerformanceHandling.hpp"
+#include "util/PerformanceMeasurement.hpp"
 
 using namespace nexc;
 
@@ -58,7 +58,7 @@ int main() {
 	Engine engine;
 
 	PlayerMovement playerMovement(engine);
-	FramePerformanceHandling framePerformanceHandling(engine);
+	PerformanceMeasurement framePerformanceHandling(engine);
 
 	world.addSystem(&engine);
 	world.addSystem(&playerMovement);
@@ -66,7 +66,7 @@ int main() {
 
 	auto sprite = std::make_shared<Sprite>();
 	sprite->texture = engine.getAssetsManager().getTexture("data/test.jpg");
-	sprite->rect = IRect(0, 0, 656, 656);
+	sprite->rect = IRect(0, 0, 300, 300);
 	sprite->pivot = Vec2(328, 328);
 
 	sprite->pixelsInUnit = 656;
@@ -75,12 +75,6 @@ int main() {
 			.set(Transform2D())
 			.set(SpriteRenderer(sprite))
 			.set(Player());
-
-	/*for (int i = 0; i < 1000; ++i) {
-	                                                                                                                                                                                                                                                                                                                                                                                                        orld.createEntity()
-				.set(Transform2D())
-				.set(SpriteRenderer(sprite));
-	}
 
 	world.createEntity()
 			.set(Transform2D())

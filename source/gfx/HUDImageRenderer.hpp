@@ -10,6 +10,7 @@ namespace nexc {
 	struct HUDImageRenderer {
 		std::shared_ptr<Sprite> sprite;
 		IRect frame;
+		int16_t layer;
 
 		HUDImageRenderer() = default;
 	};

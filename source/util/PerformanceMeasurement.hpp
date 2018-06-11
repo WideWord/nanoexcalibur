@@ -7,14 +7,14 @@
 
 namespace nexc {
 
-	class FramePerformanceHandling : public System {
+	class PerformanceMeasurement : public System {
 	public:
-		explicit FramePerformanceHandling(Engine& engine) : engine(engine) {}
+		explicit PerformanceMeasurement(Engine& engine) : engine(engine) {}
 
 		void configure() override {
 			statsText = getWorld()->createEntity();
 			HUDTextRenderer text;
-			text.font = engine.getAssetsManager().getFont("data/bignoodletoo.ttf");
+			text.font = engine.getAssetsManager().getFont("data/koverwatch.ttf");
 			statsText.set(text);
 		}
 
@@ -30,7 +30,7 @@ namespace nexc {
 			if (deltaTime > peakTime) peakTime = deltaTime;
 
 			auto text = statsText.get<HUDTextRenderer>();
-			text.text = MakeString() << "ЙЦУКЕНфывап Frame time: " << std::ceil(deltaTime * 1000.0f) << " ms\n"
+			text.text = MakeString() << "Frame time: " << std::ceil(deltaTime * 1000.0f) << " ms\n"
 				<< "Peak frame time: " << std::ceil(peakTime * 1000.0f) << " ms";
 
 			statsText.set(text);

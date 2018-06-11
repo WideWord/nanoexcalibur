@@ -1,24 +1,29 @@
 #pragma once
 
-#include <memory>
+#include "../util/Memory.hpp"
 #include "../gfx/Texture.hpp"
 #include "../gfx/Font.hpp"
+#include "../sound/Sound.hpp"
 #include <unordered_map>
 
 namespace nexc {
 
 	class AssetsManager {
 	public:
-		std::shared_ptr<Texture> getTexture(const std::string& filename) {
+		Ref<Texture> getTexture(const std::string& filename) {
 			return getAsset(filename, textures);
 		}
 
-		std::shared_ptr<Font> getFont(const std::string& filename) {
+		Ref<Font> getFont(const std::string& filename) {
 			return getAsset(filename, fonts);
 		}
 
+		Ref<Sound> getSound(const std::string& filename) {
+			return getAsset(filename, sounds);
+		}
+
 	private:
-		template<typename T> using AssetsStorage = std::unordered_map<std::string, std::weak_ptr<T>>;
+		template<typename T> using AssetsStorage = std::unordered_map<std::string, WRef<T>>;
 
 		template<typename T>
 		std::shared_ptr<T> getAsset(const std::string& filename, AssetsStorage<T>& storage) {
@@ -29,14 +34,15 @@ namespace nexc {
 					return ptr;
 				}
 			}
-			auto asset = std::make_shared<T>();
+			auto asset = New<T>();
 			asset->loadFromFile(filename);
-			storage[filename] = std::weak_ptr<T>(asset);
+			storage[filename] = WRef<T>(asset);
 			return asset;
 		}
 
 		AssetsStorage<Texture> textures;
 		AssetsStorage<Font> fonts;
+		AssetsStorage<Sound> sounds;
 	};
 
 }
