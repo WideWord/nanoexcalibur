@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ecs/ecs.hpp"
+#include <bgfx/bgfx.h>
 
 namespace nexc {
 
@@ -8,6 +9,10 @@ namespace nexc {
 	public:
 		Rendering();
 		void run() override;
+	private:
+		bgfx::ProgramHandle spriteProgram;
+		bgfx::DynamicVertexBufferHandle vertexBuffer;
+		bgfx::DynamicIndexBufferHandle indexBuffer;
 	};
 
 }
