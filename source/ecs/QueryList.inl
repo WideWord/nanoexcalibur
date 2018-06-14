@@ -31,6 +31,9 @@ namespace nexc {
 
 	inline Entity QueryIterator::operator*() {
 		Entity e;
+		if (iid == maxEntitiesNum) {
+			return e;
+		}
 		e.id = storage->entityId[iid];
 		e.generation = world->generation[e.id];
 		e.world = world;

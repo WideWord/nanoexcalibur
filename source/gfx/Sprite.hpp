@@ -13,27 +13,10 @@ namespace nexc {
 	public:
 		struct Vertex {
 			Vec2 position;
-
-			Vertex(Vec2 position) : position(position) {}
+			Vec2 texCoord;
 		};
 
-		void setMesh(const bgfx::Memory* vertices, const bgfx::Memory* indices) {
-			if (bgfx::isValid(vertexBuffer)) {
-				bgfx::destroy(vertexBuffer);
-			}
-			if (bgfx::isValid(indexBuffer)) {
-				bgfx::destroy(indexBuffer);
-			}
-
-			bgfx::VertexDecl vd;
-			vd
-					.begin()
-					.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
-					.end();
-
-			vertexBuffer = bgfx::createVertexBuffer(vertices, vd);
-			indexBuffer = bgfx::createIndexBuffer(indices);
-		}
+		void setMesh(const bgfx::Memory* vertices, const bgfx::Memory* indices);
 
 		void setTexture(Ref<Texture> newTexture) {
 			texture = std::move(newTexture);
@@ -43,14 +26,7 @@ namespace nexc {
 			return texture;
 		}
 
-		~Sprite() {
-			if (bgfx::isValid(vertexBuffer)) {
-				bgfx::destroy(vertexBuffer);
-			}
-			if (bgfx::isValid(indexBuffer)) {
-				bgfx::destroy(indexBuffer);
-			}
-		}
+		~Sprite();
 	private:
 		friend class Rendering;
 		bgfx::VertexBufferHandle vertexBuffer = BGFX_INVALID_HANDLE;

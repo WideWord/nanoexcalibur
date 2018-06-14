@@ -11,6 +11,8 @@ namespace nexc {
 		void run() override;
 	private:
 		bgfx::ProgramHandle spriteProgram;
+		bgfx::UniformHandle texColorUniform;
+		bgfx::UniformHandle transformUniform;
 		bgfx::DynamicVertexBufferHandle vertexBuffer;
 		bgfx::DynamicIndexBufferHandle indexBuffer;
 	};

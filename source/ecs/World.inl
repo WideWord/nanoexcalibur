@@ -59,6 +59,12 @@ namespace nexc {
 		return QueryList(this, storage, mask);
 	}
 
+	template<typename... T>
+	inline Entity World::getAnyEntityWith() {
+		auto list = getEntitiesWith<T...>();
+		return *(list.begin());
+	}
+
 	template<typename T>
 	ComponentStorage<T>* World::getComponentStorage() {
 		auto family = ComponentStorage<T>::getFamily();

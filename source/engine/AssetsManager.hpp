@@ -2,7 +2,6 @@
 
 #include <memory>
 #include "../gfx/Texture.hpp"
-#include "../gfx/Font.hpp"
 #include "../util/Memory.hpp"
 #include <unordered_map>
 
@@ -12,10 +11,6 @@ namespace nexc {
 	public:
 		Ref<Texture> getTexture(const std::string& filename) {
 			return getAsset(filename, textures);
-		}
-
-		Ref<Font> getFont(const std::string& filename) {
-			return getAsset(filename, fonts);
 		}
 
 	private:
@@ -37,7 +32,6 @@ namespace nexc {
 		}
 
 		AssetsStorage<Texture> textures;
-		AssetsStorage<Font> fonts;
 	};
 
 }

@@ -22,6 +22,9 @@ namespace nexc {
 		template<typename... T>
 		inline QueryList getEntitiesWith();
 
+		template<typename... T>
+		inline Entity getAnyEntityWith();
+
 		inline void addSystem(AnySystem* s, int32_t queue = 0);
 		inline void removeSystem(AnySystem* s);
 		inline void update();
