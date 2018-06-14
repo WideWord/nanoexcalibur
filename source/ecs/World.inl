@@ -17,6 +17,9 @@ namespace nexc {
 		for (uint32_t j = 0; j < maxComponentTypesNum; ++j) {
 			componentStorages[j] = nullptr;
 		}
+		for (uint32_t i = 0; i < maxSystemTypesNum; ++i) {
+			systemsByFamily[i] = nullptr;
+		}
 	}
 
 	World::~World() {
@@ -66,7 +69,7 @@ namespace nexc {
 	}
 
 
-	void World::addSystem(System* s, int32_t queue) {
+	void World::addSystem(AnySystem* s, int32_t queue) {
 
 		bool inserted = false;
 		for (auto it = systems.begin(); it != systems.end(); ++it) {
@@ -80,13 +83,14 @@ namespace nexc {
 			systems.push_back(s);
 		}
 
+		systemsByFamily[s->getFamily()] = s;
 
 		s->world = this;
 		s->queue = queue;
 		s->configure();
 	}
 
-	void World::removeSystem(System* s) {
+	void World::removeSystem(AnySystem* s) {
 		for (auto child : s->children) {
 			removeSystem(child);
 		}
@@ -95,6 +99,9 @@ namespace nexc {
 		eventsManager.unsubscribe(s);
 		s->world = nullptr;
 		systems.remove(s);
+		if (systemsByFamily[s->getFamily()] == s) {
+			systemsByFamily[s->getFamily()] = nullptr;
+		}
 	}
 
 	void World::update() {
@@ -107,6 +114,11 @@ namespace nexc {
 				storage->pack();
 			}
 		}
+	}
+
+	template<typename T>
+	inline T* World::getSystem() {
+		return systemsByFamily[SystemFamily<T>::getFamily()];
 	}
 
 	template<typename T>

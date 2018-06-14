@@ -10,7 +10,7 @@ namespace nexc {
 
 	class Entity;
 	class QueryList;
-	class System;
+	class AnySystem;
 
 	class World {
 	public:
@@ -22,9 +22,12 @@ namespace nexc {
 		template<typename... T>
 		inline QueryList getEntitiesWith();
 
-		inline void addSystem(System* s, int32_t queue = 0);
-		inline void removeSystem(System* s);
+		inline void addSystem(AnySystem* s, int32_t queue = 0);
+		inline void removeSystem(AnySystem* s);
 		inline void update();
+
+		template<typename T>
+		inline T* getSystem();
 
 		template<typename T>
 		inline void emitEvent(const T&);
@@ -32,7 +35,7 @@ namespace nexc {
 		friend class Entity;
 		friend class QueryList;
 		friend class QueryIterator;
-		friend class System;
+		friend class AnySystem;
 
 		uint32_t firstFree;
 		uint32_t nextFree[maxEntitiesNum];
@@ -58,7 +61,8 @@ namespace nexc {
 
 		void getQueryParams(Dummy<>, std::bitset<maxComponentTypesNum>& mask, uint32_t& minAliveNum, AnyComponentStorage*& storage) {}
 
-		std::list<System*> systems;
+		std::list<AnySystem*> systems;
+		AnySystem* systemsByFamily[maxSystemTypesNum];
 
 		EventsManager eventsManager;
 

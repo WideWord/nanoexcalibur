@@ -15,6 +15,8 @@ include_directories(/usr/include)
 include_directories(/usr/local/include)
 include_directories(source/3rdparty)
 link_directories(/usr/local/lib)
+include_directories(deps/include)
+link_directories(deps/lib)
 
 # OpenGL
 find_package(OpenGL)
@@ -32,5 +34,6 @@ include_directories(${GLM_INCLUDE_DIRS})
 find_package(SFML COMPONENTS graphics window system)
 include_directories(${SFML_INCLUDE_DIR})
 
+
 add_executable(df ${DDE_SOURCE})
-target_link_libraries(df ${OPENGL_LIBRARY} ${GLFW_LIBRARIES} ${SFML_LIBRARIES})
+target_link_libraries(df ${OPENGL_LIBRARY} ${GLFW_LIBRARIES} ${SFML_LIBRARIES} bgfx)

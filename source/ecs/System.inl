@@ -6,13 +6,18 @@
 namespace nexc {
 
 	template<typename T>
-	inline void System::subscribe(std::function<void(const T&)> callback) {
+	inline void AnySystem::subscribe(std::function<void(const T&)> callback) {
 		world->eventsManager.subscribe(this, callback);
 	}
 
-	inline void System::addChildSystem(System* system, int32_t queue) {
+	inline void AnySystem::addChildSystem(AnySystem* system, int32_t queue) {
 		world->addSystem(system, queue);
 		children.push_back(system);
+	}
+
+	template<typename T>
+	inline T* AnySystem::getSystem() {
+		return world->getSystem<T>();
 	}
 
 }
