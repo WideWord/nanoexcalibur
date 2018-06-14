@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include "../ecs/ecs.hpp"
+#include "../util/Math.hpp"
 
 struct GLFWwindow;
 
@@ -26,6 +27,8 @@ namespace nexc {
 
 		explicit Window(const Config& config = Config());
 		void run() override;
+
+		IVec2 getSize();
 	private:
 		GLFWwindow* internal;
 	};

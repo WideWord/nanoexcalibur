@@ -21,7 +21,7 @@ namespace nexc {
 
 		bgfx::init(init);
 
-		//bgfx::setDebug(BGFX_DEBUG_STATS);
+		bgfx::setDebug(BGFX_DEBUG_STATS);
 
 		spriteProgram = GraphicsUtils::loadProgram("sprite.vs", "sprite.fs");
 		texColorUniform = bgfx::createUniform("s_texColor", bgfx::UniformType::Int1);
@@ -61,11 +61,13 @@ namespace nexc {
 
 			if (!bgfx::isValid(sprite->vertexBuffer) || !bgfx::isValid(sprite->indexBuffer) || sprite->texture == nullptr) continue;
 
+			Mat3 transformMatrix = viewMatrix * glm::translate(glm::rotate(Mat3(1), transform.rotation), transform.position);
+
 			bgfx::setState(renderState);
 			bgfx::setVertexBuffer(0, sprite->vertexBuffer);
 			bgfx::setIndexBuffer(sprite->indexBuffer);
 			bgfx::setTexture(0, texColorUniform, sprite->texture->internal);
-			bgfx::setUniform(transformUniform, glm::value_ptr(viewMatrix), 1);
+			bgfx::setUniform(transformUniform, glm::value_ptr(transformMatrix), 1);
 			bgfx::submit(0, spriteProgram, spriteRenderer.layer);
 		}
 

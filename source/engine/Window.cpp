@@ -46,4 +46,10 @@ namespace nexc {
 		glfwPollEvents();
 	}
 
+	IVec2 Window::getSize() {
+		IVec2 result;
+		glfwGetWindowSize(internal, &result.x, &result.h);
+		return result;
+	}
+
 }
