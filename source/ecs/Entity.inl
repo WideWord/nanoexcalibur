@@ -28,8 +28,9 @@ namespace nexc {
 
 	template<typename T>
 	inline Entity& Entity::remove() {
-		world->getComponentStorage<T>()->remove(id);
 		auto fam = ComponentStorage<T>::getFamily();
+		if (!world->mask[id][fam]) return *this;
+		world->getComponentStorage<T>()->remove(id);
 		world->mask[id].set(fam, false);
 		world->emitEvent(ComponentRemovedEvent<T>(*this));
 		return *this;
