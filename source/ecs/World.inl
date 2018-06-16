@@ -124,7 +124,7 @@ namespace nexc {
 
 	template<typename T>
 	inline T* World::getSystem() {
-		return systemsByFamily[SystemFamily<T>::getFamily()];
+		return (T*)systemsByFamily[SystemFamily<T>::getFamily()];
 	}
 
 	template<typename T>

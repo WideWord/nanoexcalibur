@@ -4,6 +4,7 @@
 #include <string>
 #include "../ecs/ecs.hpp"
 #include "../util/Math.hpp"
+#include "../common/KeyCode.hpp"
 
 struct GLFWwindow;
 
@@ -29,6 +30,10 @@ namespace nexc {
 		void run() override;
 
 		IVec2 getSize();
+		Vec2 getMousePosition();
+		bool getMouseButton(int button);
+		bool getKey(KeyCode key);
+
 	private:
 		GLFWwindow* internal;
 	};

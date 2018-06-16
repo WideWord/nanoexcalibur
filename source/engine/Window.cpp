@@ -48,8 +48,22 @@ namespace nexc {
 
 	IVec2 Window::getSize() {
 		IVec2 result;
-		glfwGetWindowSize(internal, &result.x, &result.h);
+		glfwGetWindowSize(internal, &result.x, &result.y);
 		return result;
+	}
+
+	Vec2 Window::getMousePosition() {
+		double x, y;
+		glfwGetCursorPos(internal, &x, &y);
+		return Vec2(x, y);
+	}
+
+	bool Window::getMouseButton(int button) {
+		return glfwGetMouseButton(internal, button);
+	}
+
+	bool Window::getKey(KeyCode key) {
+		return glfwGetKey(internal, (int32_t)key) == GLFW_PRESS;
 	}
 
 }

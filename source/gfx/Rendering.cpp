@@ -21,7 +21,7 @@ namespace nexc {
 
 		bgfx::init(init);
 
-		bgfx::setDebug(BGFX_DEBUG_STATS);
+		//bgfx::setDebug(BGFX_DEBUG_STATS);
 
 		spriteProgram = GraphicsUtils::loadProgram("sprite.vs", "sprite.fs");
 		texColorUniform = bgfx::createUniform("s_texColor", bgfx::UniformType::Int1);
