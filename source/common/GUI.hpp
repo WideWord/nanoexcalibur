@@ -30,6 +30,7 @@ namespace nexc {
 		nk_font_atlas fontAtlas;
 		nk_font* font;
 		nk_draw_null_texture nullTexture;
+		bgfx::TextureHandle nullTextureHandle;
 
 		Input guiInput;
 
@@ -38,6 +39,7 @@ namespace nexc {
 		bgfx::TextureHandle fontAtlasTexture;
 		bgfx::ProgramHandle program;
 		bgfx::UniformHandle transformUniform;
+		bgfx::UniformHandle textureUniform;
 	};
 
 }

@@ -8,6 +8,7 @@
 #include "Camera2D.hpp"
 #include <glm/gtx/matrix_transform_2d.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "../engine/Engine.hpp"
 
 namespace nexc {
 
@@ -29,7 +30,9 @@ namespace nexc {
 	}
 
 	void Rendering::run() {
-		bgfx::setViewRect(0, 0, 0, 800, 600);
+		auto screenSize = getWorld()->getSystem<Engine>()->getScreenSize();
+
+		bgfx::setViewRect(0, 0, 0, screenSize.x, screenSize.y);
 		bgfx::setViewClear(0, BGFX_CLEAR_COLOR, 0x0000ffff, 0.0f, 0);
 		bgfx::setViewMode(0, bgfx::ViewMode::DepthAscending);
 		bgfx::touch(0);
@@ -47,7 +50,7 @@ namespace nexc {
 			auto cam = camera.get<Camera2D>();
 
 			float vHalfSize = cam.size * 0.5f;
-			float hHalfSize = vHalfSize / 600.0f * 800.0f;
+			float hHalfSize = vHalfSize / (float)screenSize.y * (float)screenSize.x;
 
 
 			viewMatrix = glm::scale(glm::rotate(glm::translate(Mat3(1), -transform.position), -transform.rotation), Vec2(1.0f / hHalfSize, 1.0f / vHalfSize));

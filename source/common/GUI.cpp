@@ -18,8 +18,8 @@ namespace nexc {
 
 		int w, h;
 		const void* image = nk_font_atlas_bake(&fontAtlas, &w, &h, NK_FONT_ATLAS_RGBA32);
-		fontAtlasTexture = bgfx::createTexture2D(w, h, false, 1, bgfx::TextureFormat::RGBA8, 0, bgfx::makeRef(image, w * h * 4));
-		nk_font_atlas_end(&fontAtlas, nk_handle_id(fontAtlasTexture.idx), &nullTexture);
+		fontAtlasTexture = bgfx::createTexture2D(w, h, false, 1, bgfx::TextureFormat::RGBA8, 0, bgfx::copy(image, w * h * sizeof(uint8_t) * 4));
+		nk_font_atlas_end(&fontAtlas, nk_handle_ptr(&fontAtlasTexture), &nullTexture);
 
 		nk_init_default(&context, &font->handle);
 
@@ -27,7 +27,7 @@ namespace nexc {
 		vd.begin()
 				.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
 				.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-				.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8)
+				.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
 				.end();
 
 		vertexBuffer = bgfx::createDynamicVertexBuffer((uint32_t)0, vd, BGFX_BUFFER_ALLOW_RESIZE);
@@ -35,6 +35,13 @@ namespace nexc {
 
 		program = GraphicsUtils::loadProgram("gui.vs", "gui.fs");
 		transformUniform = bgfx::createUniform("u_transform", bgfx::UniformType::Mat3);
+		textureUniform = bgfx::createUniform("s_texColor", bgfx::UniformType::Int1);
+
+		nullTexture.texture.ptr = &nullTextureHandle;
+		nullTexture.uv = { 0, 0 };
+
+		uint8_t nullTextureData[] = { 255, 255, 255, 255 };
+		nullTextureHandle = bgfx::createTexture2D(1, 1, false, 1, bgfx::TextureFormat::RGBA8, 0, bgfx::copy(nullTextureData, sizeof(nullTextureData)));
 	}
 
 	GUI::~GUI() {
@@ -52,7 +59,8 @@ namespace nexc {
 
 		nk_begin(&context, "Grid Demo", nk_rect(0, 0, 275, 250),
 					 NK_WINDOW_TITLE|NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|
-					 NK_WINDOW_NO_SCROLLBAR);
+					 NK_WINDOW_NO_SCROLLBAR|NK_WINDOW_CLOSABLE);
+
 
 		nk_end(&context);
 
@@ -102,6 +110,14 @@ namespace nexc {
 			bgfx::setIndexBuffer(indexBuffer, offset, cmd->elem_count);
 			//bgfx::setScissor(cmd->clip_rect.x, cmd->clip_rect.y, cmd->clip_rect.w, cmd->clip_rect.h);
 			bgfx::setUniform(transformUniform, glm::value_ptr(transform));
+
+
+			auto texture = (bgfx::TextureHandle*)cmd->texture.ptr;
+			bgfx::setTexture(0, textureUniform, *texture);
+
+
+
+
 			bgfx::submit(0, program, 10000);
 			offset += cmd->elem_count;
 		}
