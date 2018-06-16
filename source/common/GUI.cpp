@@ -56,18 +56,24 @@ namespace nexc {
 
 		nk_end(&context);
 
+		struct Vertex {
+			Vec2 pos;
+			Vec2 tex;
+			uint8_t color[4];
+		};
+
 		nk_convert_config cfg = {};
 		static const nk_draw_vertex_layout_element vertex_layout[] = {
-				{NK_VERTEX_POSITION, NK_FORMAT_FLOAT, 0},
-				{NK_VERTEX_TEXCOORD, NK_FORMAT_FLOAT, sizeof(float) * 2},
-				{NK_VERTEX_COLOR, NK_FORMAT_R8G8B8A8, sizeof(float) * 4},
+				{NK_VERTEX_POSITION, NK_FORMAT_FLOAT, offsetof(Vertex, pos) },
+				{NK_VERTEX_TEXCOORD, NK_FORMAT_FLOAT, offsetof(Vertex, tex) },
+				{NK_VERTEX_COLOR, NK_FORMAT_R8G8B8A8, offsetof(Vertex, color) },
 				{NK_VERTEX_LAYOUT_END}
 		};
 		cfg.shape_AA = NK_ANTI_ALIASING_ON;
 		cfg.line_AA = NK_ANTI_ALIASING_ON;
 		cfg.vertex_layout = vertex_layout;
-		cfg.vertex_size = sizeof(float) * 4 + 4;
-		cfg.vertex_alignment = sizeof(float) * 4 + 4;
+		cfg.vertex_size = sizeof(Vertex);
+		cfg.vertex_alignment = alignof(Vertex);
 		cfg.circle_segment_count = 22;
 		cfg.curve_segment_count = 22;
 		cfg.arc_segment_count = 22;
@@ -85,7 +91,8 @@ namespace nexc {
 		bgfx::update(indexBuffer, 0, bgfx::copy(idx.memory.ptr, idx.memory.size));
 
 		auto screenSize = getWorld()->getSystem<Engine>()->getScreenSize();
-		Mat3 transform = glm::translate(glm::scale(Mat3(1), Vec2(2.0f / (float)screenSize.x, 2.0f / (float)screenSize.y)), Vec2(-0.5f, -0.5f));
+		Mat3 transform = glm::scale(Mat3(1), Vec2(2.0f / (float)screenSize.x, -2.0f / (float)screenSize.y));
+		transform = glm::translate(transform, Vec2(-screenSize.x * 0.5f, -screenSize.y * 0.5f));
 
 		const nk_draw_command* cmd;
 		unsigned offset = 0;
@@ -93,7 +100,7 @@ namespace nexc {
 			bgfx::setState(BGFX_STATE_BLEND_ALPHA | BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A);
 			bgfx::setVertexBuffer(0, vertexBuffer);
 			bgfx::setIndexBuffer(indexBuffer, offset, cmd->elem_count);
-			bgfx::setScissor(cmd->clip_rect.x, cmd->clip_rect.y, cmd->clip_rect.w, cmd->clip_rect.h);
+			//bgfx::setScissor(cmd->clip_rect.x, cmd->clip_rect.y, cmd->clip_rect.w, cmd->clip_rect.h);
 			bgfx::setUniform(transformUniform, glm::value_ptr(transform));
 			bgfx::submit(0, program, 10000);
 			offset += cmd->elem_count;

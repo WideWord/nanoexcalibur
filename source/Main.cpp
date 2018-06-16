@@ -34,6 +34,7 @@ int main() {
 	sprite->setMesh(bgfx::makeRef(vertices, sizeof(vertices)), bgfx::makeRef(indices, sizeof(indices)));
 	sprite->setTexture(engine.getAssetsManager().getTexture("data/test.jpg"));
 
+
 	world.createEntity().set(Transform2D()).set(SpriteRenderer(sprite));
 
 	world.createEntity().set(Transform2D()).set(Camera2D());
