@@ -1,0 +1,6 @@
+{
+	"texture": "data/sheet.png",
+	"rect": [0, 96, 4, 4],
+	"origin": [2, 2],
+	"pixelsInUnit": 32
+}
